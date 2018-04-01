@@ -1,5 +1,4 @@
 import os
-import time
 from notifier import Notifier
 from tempfile import mkstemp
 
@@ -31,7 +30,9 @@ class FileNotifier(Notifier):
         os.remove(self.tmpfilename)
 
 # Testing
+
 if __name__ == '__main__':
+    import time
     notifier = FileNotifier()
     for mes in ['Hello',
                 'Hi',
