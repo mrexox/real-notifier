@@ -1,6 +1,5 @@
 import imaplib
 import getpass
-from file_notifier import FileNotifier
 
 # Я думаю, что нужно отлавливать исключения этого класса в демоне
 # Исключение может появиться в случае создания объекта и вызова
@@ -15,7 +14,7 @@ class Imap():
 
     def __init__(self, login, password):
         service = login.split('@')[1] # split -> ['name', 'service.ru']
-        if service not in ['mail.ru', 'yandex.ru']:
+        if service not in ['mail.ru', 'yandex.ru', 'yandex.ua']:
             print("Not supported service")
             raise Exception() # TODO specify exception
         
