@@ -1,1 +1,4 @@
 Dockerfile
+daemon/__pycache__/
+daemon/imap/__pycache__/
+daemon/notifier/__pycache__/
