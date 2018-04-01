@@ -5,14 +5,21 @@ from tempfile import mkstemp
 
 class FileNotifier(Notifier):
     def __init__(self):
+        """Creating temporary file with standard function"""
         (handle, path) = mkstemp(suffix='notifications')
         self.tmpfile = handle
         self.tmpfilename = path
         
     def notify(self, message):
-        """The interface method realization"""
-        os.write(self.tmpfile, str.encode(message)) # expects bytes
-        self.log(message)
+        """The interface method realization.
+        Returns:
+            True - if the write operation was successful.
+            None - otherwise
+        """
+        bytes_written = os.write(self.tmpfile, str.encode(message)) # expects bytes
+        if bytes_written == len(message):
+            self.log(message)
+            return True
 
     def log(self, message):
         """Logger, for us to see what happened"""
