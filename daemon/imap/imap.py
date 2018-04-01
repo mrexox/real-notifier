@@ -1,6 +1,5 @@
 import imaplib
 import getpass
-from file_notifier import FileNotifier
 
 # Я думаю, что нужно отлавливать исключения этого класса в демоне
 # Исключение может появиться в случае создания объекта и вызова
