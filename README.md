@@ -1,8 +1,8 @@
 # Real Notifier
 
-| Sender | Type | Count | Chk-sum | Ending |
-|--------|------|-------|---------|--------|
-|      8 |    4 |    12 |       8 |      8 |
+| **Type**  | Sender | Type | Count | Chk-sum | Ending |
+|-----------|--------|------|-------|---------|--------|
+| **Bytes** |      8 |    4 |    12 |       8 |      8 |
 
 > 40 bits (5 bytes) 
 
