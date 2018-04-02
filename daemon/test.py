@@ -3,7 +3,7 @@ import sys, time
 sys.path.append("./imap")
 sys.path.append("./notifier")
 
-from imap.imap import Imap
+from imap.imap import *
 from notifier.file import FileNotifier
 
 from config import Config
@@ -16,7 +16,8 @@ if __name__ == '__main__':
     except ImapException:
         print("exception!")
 
-    out = FileNotifier()
+    if config.notifyType == "file":
+        out = FileNotifier()
 
     i = 5
     while i:

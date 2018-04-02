@@ -1,33 +1,47 @@
 import tempfile, os, sys, time, logging
 
+sys.path.append("./imap")
+sys.path.append("./notifier")
+
 from daemon import Daemon
 from config import Config
+from imap.imap import *
+from notifier.file import FileNotifier
 
 class daemonRealNotifier(Daemon):
     def run(self):
-        config = Config()
-        logging.basicConfig(filename = config.logPath + '/RealNotirier.log',
-            filemode="w",
-            level = config.logLevel,
-            format = '%(asctime)s %(levelname)s: %(message)s',
-            datefmt = '%Y-%m-%d %I:%M:%S')
-        
-        if config.mail:
-            sys.path.append("./imap")
-            from imap.imap import Imap
-            imap = Imap(config.mailLogin, config.mailPassword)
-        
-        if config.notifyType == "file":
-            sys.path.append("./notifier")
-            from notifier.file import FileNotifier
+        imap = False
+        out = False
+
+        if self.config.mail:
+            try:
+                imap = Imap(self.config.mailLogin, self.config.mailPassword)
+            except ImapException as e:
+                logging.error(e)
+            else:
+                logging.debug("RealNotifier: Imap initialized")        
+
+        if self.config.notifyType == "file":
             out = FileNotifier()
+            logging.debug("RealNotifier: FileNotifier initialized")
         #elif config.notifyType == "oter notify type":
         #    out = OtherNotifier()
 
         while True:
-            out.notify(imap.new_messages_count())
-            time.sleep(config.daemonTimeout)
-
+            if imap:
+                try:
+                    imap_count = str(imap.new_messages_count())
+                except ImapException as e:
+                    logging.error(e)
+                else:
+                    logging.debug("new messages count from imap = {0}".format(imap_count))
+                    
+            try:
+                out.notify(imap_count)
+                time.sleep(self.config.daemonTimeout)
+            except Exception as e:
+                logging.error(e)
+                sys.exit(1)
 
 
 
@@ -35,19 +49,14 @@ if __name__ == '__main__':
     pidFile = tempfile.gettempdir() + '/daemonRealNotifier.pid'
     daemon = daemonRealNotifier(pidFile)
 
-    
-
     if len(sys.argv) == 2:
         if 'start' == sys.argv[1]:
-            print('Daemon starting..')
             daemon.start()
             print('Daemon started!')
         elif 'stop' == sys.argv[1]:
-            print('Daemon stopping..')
             daemon.stop()
             print('Daemon stopped!')
         elif 'restart' == sys.argv[1]:
-            print('Daemon restarting..')
             daemon.restart()
             print('Daemon restarted!')
         else:

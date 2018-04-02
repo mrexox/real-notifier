@@ -1,4 +1,4 @@
-import os, configparser, logging
+import os, configparser
 
 """ Класс организует доступ к параметрам, сохраненным в файле конфигурации config.cfg"""
 class Config:
@@ -12,7 +12,7 @@ class Config:
 
         #daemon
         if config.has_option('daemon', 'timeout'):
-            self.daemonTimeout = config.get('daemon', 'timeout')
+            self.daemonTimeout = int(config.get('daemon', 'timeout'))
         else:
             self.daemonTimeout = 60
 
@@ -36,12 +36,6 @@ class Config:
         else:
             self.logPath = "/tmp"
         if config.has_option('log', 'level'):
-            level = config.get('log', 'path')
-            if level == 'debug':
-                self.logLevel = logging.DEBUG
-            elif level == 'critical':
-                self.logLevel = logging.CRITICAL
-            else:
-                self.logLevel = logging.INFO
+            self.logLevel = int(config.get('log', 'level'))
         else:
-            self.logLevel = logging.INFO
+            self.logLevel = 20
