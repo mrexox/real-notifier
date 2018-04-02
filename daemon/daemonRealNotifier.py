@@ -1,21 +1,25 @@
-import tempfile, os, sys
+import tempfile, os, sys, time, logging
 
 from daemon import Daemon
 from config import Config
 
-sys.path.append("./notifier")
-
 class daemonRealNotifier(Daemon):
     def run(self):
         config = Config()
-
+        logging.basicConfig(filename = config.logPath + '/RealNotirier.log',
+            filemode="w",
+            level = config.logLevel,
+            format = '%(asctime)s %(levelname)s: %(message)s',
+            datefmt = '%Y-%m-%d %I:%M:%S')
+        
         if config.mail:
             sys.path.append("./imap")
-            import imap
+            from imap.imap import Imap
             imap = Imap(config.mailLogin, config.mailPassword)
         
-        if config.notifyType == "file":            
-            import notifier
+        if config.notifyType == "file":
+            sys.path.append("./notifier")
+            from notifier.file import FileNotifier
             out = FileNotifier()
         #elif config.notifyType == "oter notify type":
         #    out = OtherNotifier()
@@ -25,9 +29,14 @@ class daemonRealNotifier(Daemon):
             time.sleep(config.daemonTimeout)
 
 
+
+
 if __name__ == '__main__':
     pidFile = tempfile.gettempdir() + '/daemonRealNotifier.pid'
     daemon = daemonRealNotifier(pidFile)
+
+    
+
     if len(sys.argv) == 2:
         if 'start' == sys.argv[1]:
             print('Daemon starting..')
