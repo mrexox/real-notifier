@@ -6,7 +6,6 @@ sys.path.append("./notifier")
 import imap
 import notifier
 
-from daemon import Daemon
 from config import Config
 
 if __name__ == '__main__':
