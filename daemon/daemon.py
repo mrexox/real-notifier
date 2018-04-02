@@ -12,9 +12,9 @@ class Daemon:
 	def __init__(self, pidfile): 
 		self.pidfile = pidfile
 		self.config = Config()
-		logging.basicConfig(filename = self.config.logPath + '/RealNotifier.log',
+		logging.basicConfig(filename = self.config.log_path + '/RealNotifier.log',
             filemode="w",
-            level = self.config.logLevel,
+            level = self.config.log_level,
             format = '%(asctime)s %(levelname)s: %(message)s',
             datefmt = '%Y-%m-%d %I:%M:%S')
 		logging.debug("Daemon: finish initialization")

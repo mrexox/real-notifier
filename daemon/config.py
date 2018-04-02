@@ -12,30 +12,30 @@ class Config:
 
         #daemon
         if config.has_option('daemon', 'timeout'):
-            self.daemonTimeout = int(config.get('daemon', 'timeout'))
+            self.daemon_timeout = int(config.get('daemon', 'timeout'))
         else:
-            self.daemonTimeout = 60
+            self.daemon_timeout = 60
 
-        #mail
-        if config.has_option('mail', 'login') and config.has_option('mail', 'password'):
+        #imap
+        if config.has_option('imap', 'login') and config.has_option('imap', 'password'):
             self.mail = True
-            self.mailLogin = config.get('mail', 'login')
-            self.mailPassword = config.get('mail', 'password')
+            self.mail_login = config.get('imap', 'login')
+            self.mail_password = config.get('imap', 'password')
         else:
             self.mail = False
 
         #notify
         if config.has_option('notify', 'type'):
-            self.notifyType = config.get('notify', 'type')
+            self.notify_type = config.get('notify', 'type')
         else:
-            self.notifyType = "file"
+            self.notify_type = "file"
 
         #log
         if config.has_option('log', 'path'):
-            self.logPath = config.get('log', 'path')
+            self.log_path = config.get('log', 'path')
         else:
-            self.logPath = "/tmp"
+            self.log_path = "/tmp"
         if config.has_option('log', 'level'):
-            self.logLevel = int(config.get('log', 'level'))
+            self.log_level = int(config.get('log', 'level'))
         else:
-            self.logLevel = 20
+            self.log_level = 20
