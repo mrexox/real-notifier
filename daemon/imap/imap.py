@@ -1,5 +1,6 @@
 import imaplib
-import getpass
+
+from imapException import ImapException
 
 # Я думаю, что нужно отлавливать исключения этого класса в демоне
 # Исключение может появиться в случае создания объекта и вызова
@@ -15,16 +16,14 @@ class Imap():
     def __init__(self, login, password):
         service = login.split('@')[1] # split -> ['name', 'service.ru']
         if service not in ['mail.ru', 'yandex.ru', 'yandex.ua']:
-            print("Not supported service")
-            raise Exception() # TODO specify exception
+            raise ImapException("not supported service")
         
         self.imap = imaplib.IMAP4_SSL('imap.' + service)
 
         try:
             self.imap.login(login, password)
         except:
-            print("Not valid credentials") # TODO log it
-            exit(1)
+            raise ImapException('not valid credentials')
 
         self.imap.select('INBOX')
 
@@ -34,11 +33,4 @@ class Imap():
         if status == 'OK':
             return len(messages[0].split(b' '))
         else:
-            return -1 # raise ImapBadResponseException()
-    
-
-if __name__ == '__main__':
-    import getpass
-    
-    imap = Imap('meexox@mail.ru', getpass.getpass())
-    print(imap.new_messages_count())
+            raise ImapException("bad response from mail server")

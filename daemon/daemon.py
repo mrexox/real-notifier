@@ -1,13 +1,23 @@
 """Generic linux daemon base class for python 3.x."""
 
-import sys, os, time, atexit, signal
+import sys, os, time, atexit, signal, logging
+
+from config import Config
 
 class Daemon:
 	"""A generic daemon class.
 
 	Usage: subclass the daemon class and override the run() method."""
 
-	def __init__(self, pidfile): self.pidfile = pidfile
+	def __init__(self, pidfile): 
+		self.pidfile = pidfile
+		self.config = Config()
+		logging.basicConfig(filename = self.config.log_path + '/RealNotifier.log',
+            filemode="w",
+            level = self.config.log_level,
+            format = '%(asctime)s %(levelname)s: %(message)s',
+            datefmt = '%Y-%m-%d %I:%M:%S')
+		logging.debug("Daemon: finish initialization")
 	
 	def daemonize(self):
 		"""Deamonize class. UNIX double fork mechanism."""
@@ -21,7 +31,7 @@ class Daemon:
 				# exit first parent
 				sys.exit(0) 
 		except OSError as err: 
-			sys.stderr.write('fork #1 failed: {0}\n'.format(err))
+			logging.error('fork #1 failed: {0}\n'.format(err))
 			sys.exit(1)
 	
 		# decouple from parent environment
@@ -36,7 +46,7 @@ class Daemon:
 				# exit from second parent
 				sys.exit(0) 
 		except OSError as err: 
-			sys.stderr.write('fork #2 failed: {0}\n'.format(err))
+			logging.error('fork #2 failed: {0}\n'.format(err))
 			sys.exit(1) 
 	
 		# redirect standard file descriptors
@@ -74,11 +84,12 @@ class Daemon:
 		if pid:
 			message = "pidfile {0} already exist. " + \
 					"Daemon already running?\n"
-			sys.stderr.write(message.format(self.pidfile))
+			logging.error(message.format(self.pidfile))
 			sys.exit(1)
 		
 		# Start the daemon
 		self.daemonize()
+		logging.debug("Daemon: started")
 		self.run()
 
 	def stop(self):
@@ -94,7 +105,7 @@ class Daemon:
 		if not pid:
 			message = "pidfile {0} does not exist. " + \
 					"Daemon not running?\n"
-			sys.stderr.write(message.format(self.pidfile))
+			logging.warning(message.format(self.pidfile))
 			return # not an error in a restart
 
 		# Try killing the daemon process	
@@ -108,8 +119,9 @@ class Daemon:
 				if os.path.exists(self.pidfile):
 					os.remove(self.pidfile)
 			else:
-				print (str(err.args))
+				logging.error(str(err.args))
 				sys.exit(1)
+		logging.debug("Daemon: stoped")
 
 	def restart(self):
 		"""Restart the daemon."""
@@ -121,3 +133,4 @@ class Daemon:
 		
 		It will be called after the process has been daemonized by 
 		start() or restart()."""
+		raise NotImplementedError("Should implement your own run() realization!")
