@@ -1,7 +1,19 @@
-"""Generic linux daemon base class for python 3.x."""
+"""
+Abstract Daemon class
+Initialization with a file where PID is stored if
+a daemon was already started.
 
-import sys, os, time, atexit, signal, logging
+Supports `start`, `stop` and `restar`.
 
+Must implement `run` method before usage
+"""
+
+import sys
+import os
+import time
+import atexit
+import signal
+import logging
 from config import Config
 
 class Daemon:
@@ -13,12 +25,12 @@ class Daemon:
 		self.pidfile = pidfile
 		self.config = Config()
 		logging.basicConfig(filename = self.config.log_path + '/RealNotifier.log',
-            filemode="w",
-            level = self.config.log_level,
-            format = '%(asctime)s %(levelname)s: %(message)s',
-            datefmt = '%Y-%m-%d %I:%M:%S')
-		logging.debug("Daemon: finish initialization")
-	
+                                    filemode="w",
+                                    level = self.config.log_level,
+                                    format = '%(asctime)s %(levelname)s: %(message)s',
+                                    datefmt = '%Y-%m-%d %I:%M:%S')
+		logging.debug("Daemon:  initialized.")
+	        
 	def daemonize(self):
 		"""Deamonize class. UNIX double fork mechanism."""
 
@@ -33,12 +45,12 @@ class Daemon:
 		except OSError as err: 
 			logging.error('fork #1 failed: {0}\n'.format(err))
 			sys.exit(1)
-	
+	                
 		# decouple from parent environment
 		os.chdir('/')
 		os.setsid()
 		os.umask(0) 
-	
+	        
 		# do second fork
 		try: 
 			pid = os.fork() 
@@ -48,7 +60,7 @@ class Daemon:
 		except OSError as err: 
 			logging.error('fork #2 failed: {0}\n'.format(err))
 			sys.exit(1) 
-	
+	                
 		# redirect standard file descriptors
 		sys.stdout.flush()
 		sys.stderr.flush()
@@ -59,14 +71,14 @@ class Daemon:
 		os.dup2(si.fileno(), sys.stdin.fileno())
 		os.dup2(so.fileno(), sys.stdout.fileno())
 		os.dup2(se.fileno(), sys.stderr.fileno())
-	
+	        
 		# write pidfile
 		atexit.register(self.delpid)
 
 		pid = str(os.getpid())
 		with open(self.pidfile,'w+') as f:
 			f.write(pid + '\n')
-	
+	                
 	def delpid(self):
 		os.remove(self.pidfile)
 
@@ -80,13 +92,13 @@ class Daemon:
 				pid = int(pf.read().strip())
 		except IOError:
 			pid = None
-	
+	                
 		if pid:
 			message = "pidfile {0} already exist. " + \
-					"Daemon already running?\n"
+				  "Daemon already running?\n"
 			logging.error(message.format(self.pidfile))
 			sys.exit(1)
-		
+		        
 		# Start the daemon
 		self.daemonize()
 		logging.debug("Daemon: started")
@@ -101,10 +113,10 @@ class Daemon:
 				pid = int(pf.read().strip())
 		except IOError:
 			pid = None
-	
+	                
 		if not pid:
 			message = "pidfile {0} does not exist. " + \
-					"Daemon not running?\n"
+				  "Daemon not running?\n"
 			logging.warning(message.format(self.pidfile))
 			return # not an error in a restart
 
@@ -121,7 +133,7 @@ class Daemon:
 			else:
 				logging.error(str(err.args))
 				sys.exit(1)
-		logging.debug("Daemon: stoped")
+		                logging.debug("Daemon: stoped")
 
 	def restart(self):
 		"""Restart the daemon."""

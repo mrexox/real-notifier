@@ -1,5 +1,5 @@
-import logging, tempfile
- 
+import logging
+import tempfile
 from config import Config
 
 config = Config()

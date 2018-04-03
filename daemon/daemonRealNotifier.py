@@ -1,8 +1,9 @@
-import tempfile, os, sys, time, logging
+import sys
+import time
+import logging
 
 sys.path.append("./imap")
 sys.path.append("./notifier")
-
 from daemon import Daemon
 from config import Config
 from imap.imap import *
@@ -46,6 +47,8 @@ class DaemonRealNotifier(Daemon):
 
 
 if __name__ == '__main__':
+    `import tempfile
+    
     pid_file = tempfile.gettempdir() + '/daemonRealNotifier.pid'
     daemon = DaemonRealNotifier(pid_file)
 
