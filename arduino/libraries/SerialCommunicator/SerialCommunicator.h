@@ -5,7 +5,6 @@
 #ifndef SerialCommunicator_h
 #define SerialCommunicator_h
 
-
 #include <Arduino.h>
  
 class SerialCommunicator
@@ -17,12 +16,11 @@ class SerialCommunicator
     int get_type();
     int get_value();
     void next();
+    void serialEvent();
   private:
     bool _available;
     byte _message[4];
-    void serialEvent();
     bool check_sum();
 };
-
 
 #endif
