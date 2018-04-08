@@ -1,10 +1,6 @@
 import imaplib
 
-from imapException import ImapException
-
-# Я думаю, что нужно отлавливать исключения этого класса в демоне
-# Исключение может появиться в случае создания объекта и вызова
-# метода new_messages_count
+from imap_exception import ImapException
 
 class Imap():
     """Mail communication class

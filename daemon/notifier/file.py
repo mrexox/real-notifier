@@ -1,5 +1,5 @@
 import os
-from .notifier import Notifier
+from notifier import Notifier
 from tempfile import mkstemp
 
 class FileNotifier(Notifier):
@@ -8,7 +8,7 @@ class FileNotifier(Notifier):
         (handle, path) = mkstemp(suffix='notifications')
         self.tmpfile = handle
         self.tmpfilename = path
-        
+
     def notify(self, message):
         """The interface method realization.
         Returns:
@@ -16,13 +16,8 @@ class FileNotifier(Notifier):
             None - otherwise
         """
         bytes_written = os.write(self.tmpfile, str.encode(message)) # expects bytes
-        if bytes_written == len(message):
-            self.log(message)
-            return True
-
-    def log(self, message):
-        """Logger, for us to see what happened"""
-        print(self.tmpfilename + ": written - " + message)
+        if bytes_written == len(message): # successed writing
+            return message
 
     def __del__(self):
         """Cleaning after"""
