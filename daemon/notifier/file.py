@@ -1,5 +1,5 @@
 import os
-from notifier import Notifier
+from abstract_notifier import Notifier
 from tempfile import mkstemp
 
 class FileNotifier(Notifier):
