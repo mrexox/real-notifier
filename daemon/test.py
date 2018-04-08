@@ -12,15 +12,16 @@ if __name__ == '__main__':
     config = Config()
 
     try:
-        imap = Imap(config.mailLogin, config.mailPassword)
+        imap = Imap(config.mail_login, config.mail_password)
     except ImapException:
         print("exception!")
 
-    if config.notifyType == "file":
+    
+    if config.notify_type == "file":
         out = FileNotifier()
 
-    i = 5
+    i = 5 # times
     while i:
             out.notify(str(imap.new_messages_count()))
-            time.sleep(int(config.daemonTimeout))
+            time.sleep(int(config.daemon_timeout))
             i = i - 1
