@@ -6,8 +6,10 @@ DEFAULT_LOGLEVEL = 20
 DEFAULT_LOGPATH = "/tmp"
 DEFAULT_NOTIFY_TYPE = "file"
 
-"""Provides access to parameters in config.cfg"""
+
 class Config:
+    """Provides access to parameters in config.cfg"""
+    
     def __init__(self):
         config = configparser.ConfigParser()
         if os.path.exists("config.cfg"):

@@ -1,2 +1,2 @@
-__all__ = ["file", "notifierException"]
+__all__ = ["file", "notifier_exception"]
 

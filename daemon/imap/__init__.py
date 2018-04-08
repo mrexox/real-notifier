@@ -1,2 +1,2 @@
-__all__ = ["imap", "imapException"]
+__all__ = ["imap", "imap_exception"]
 
