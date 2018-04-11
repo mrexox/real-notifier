@@ -3,7 +3,7 @@ Abstract Daemon class
 Initialization with a file where PID is stored if
 a daemon was already started.
 
-Supports `start`, `stop` and `restar`.
+Supports `start`, `stop` and `restart`.
 
 Must implement `run` method before usage
 """
@@ -88,7 +88,6 @@ class Daemon:
 		# Check for a pidfile to see if the daemon already runs
 		try:
 			with open(self.pidfile,'r') as pf:
-
 				pid = int(pf.read().strip())
 		except IOError:
 			pid = None

@@ -5,12 +5,14 @@ from tempfile import mkstemp
 class FileNotifier(Notifier):
     def __init__(self):
         """Creating temporary file with standard function"""
+
         (handle, path) = mkstemp(suffix='notifications')
         self.tmpfile = handle
         self.tmpfilename = path
 
     def notify(self, message):
-        """The interface method realization.
+        """
+        The interface method realization.
         Returns:
             True - if the write operation was successful.
             None - otherwise
@@ -20,7 +22,7 @@ class FileNotifier(Notifier):
             return message
 
     def __del__(self):
-        """Cleaning after"""
+        """Cleaning temp files"""
         os.close(self.tmpfile)
         os.remove(self.tmpfilename)
 
