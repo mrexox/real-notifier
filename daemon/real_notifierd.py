@@ -45,6 +45,7 @@ class RealNotifier(Daemon):
                 sys.exit(1)
 
 
+# ---- Testing ----
 
 if __name__ == '__main__':
     import tempfile

@@ -12,39 +12,50 @@ class Config:
     
     def __init__(self):
         config = configparser.ConfigParser()
-        if os.path.exists("config.cfg"):
+        if os.path.exists("config.cfg"): # (ian) I suggest to put it to /etc/rnotifier/config.ini
             config.read("config.cfg")
         else:
             print("File 'config.cfg' does not exist")
             raise Exception() # TODO specify exception
 
+        self.config = {
+            'daemon': {
+                'timeout': DEFAULT_TIMEOUT
+            },
+            'mail': {
+                'enabled': False
+            },
+            'log': {
+                'path': DEFAULT_LOGPATH,
+                'level': DEFAULT_LOGLEVEL
+            },
+            'notifier': {
+                'type': DEFAULT_NOTIFY_TYPE
+            }
+        }
+        
         # daemon
         if config.has_option('daemon', 'timeout'):
-            self.daemon_timeout = int(config.get('daemon', 'timeout'))
-        else:
-            self.daemon_timeout = DEFAULT_TIMEOUT
+            self.config['daemon']['timeout'] = int(config.get('daemon', 'timeout'))
 
         # imap
         if config.has_option('imap', 'login') and config.has_option('imap', 'password'):
-            self.mail = True
-            self.mail_login = config.get('imap', 'login')
-            self.mail_password = config.get('imap', 'password')
-        else:
-            self.mail = False
+            # !Check if empty
+            self.config['mail']['enabled'] = True
+            self.config['mail']['login'] = config.get('imap', 'login')
+            self.config['mail']['password'] = config.get('imap', 'password')
 
         # notify
         if config.has_option('notify', 'type'):
-            self.notify_type = config.get('notify', 'type')
-        else:
-            self.notify_type = DEFAULT_NOTIFY_TYPE
+            self.config['notify']['type'] = config.get('notify', 'type')
 
         # log
         if config.has_option('log', 'path'):
-            self.log_path = config.get('log', 'path')
-        else:
-            self.log_path = DEFAULT_LOGPATH
+            self.config['log']['path'] = config.get('log', 'path')
             
         if config.has_option('log', 'level'):
-            self.log_level = int(config.get('log', 'level'))
-        else:
-            self.log_level = DEFAULT_LOGLEVEL
+            self.config['log']['level'] = int(config.get('log', 'level'))
+
+    def __getitem__(self, attr):
+        """Dictionary interface. Only getter"""
+        return self.config[attr]
