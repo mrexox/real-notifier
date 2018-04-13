@@ -3,6 +3,7 @@
 SerialCommunicator communicator;
 
 void setup() {
+  // Initialize all out pins
   for (int i = 2; i <= 13; i++) {
     pinMode(i, OUTPUT);
   }
@@ -12,44 +13,46 @@ void setup() {
 int const NEW_MESSAGE_BLINK_PIN = 13;
 int const NEW_MESSAGE_BLINK_DELAY = 300;
 unsigned long new_message_blink_start_time = 0;
-bool communication_enabled = false;
-
-int pre_value = 0;
+bool got_first_message = false;
 
 void loop() {
-  if (communication_enabled || communicator.available()) {
-    unsigned long cur_time = millis();
-  
-    // if available new message
-    if (communicator.available()) {
-      communication_enabled = true;
-      // make blink
-      digitalWrite(NEW_MESSAGE_BLINK_PIN, HIGH);
-      new_message_blink_start_time = cur_time;
-      // read and display new value
-      int cur_value = communicator.get_value();
-      if (cur_value != pre_value) {
-        display_value(cur_value);
-        pre_value = cur_value;
-      }
-      // wait for next message
-      communicator.next();
-    }
-    // finish blink after NEW_MESSAGE_BLINK_DELAY milliseconds
-    if (new_message_blink_start_time && cur_time - new_message_blink_start_time > NEW_MESSAGE_BLINK_DELAY) {
-      digitalWrite(NEW_MESSAGE_BLINK_PIN, LOW);
-      new_message_blink_start_time = 0;
-    }
+  unsigned long cur_time = millis();
+
+  // if available new message
+  if (communicator.available()) {
+    got_first_message = true;
+
+    // make blink
+    digitalWrite(NEW_MESSAGE_BLINK_PIN, HIGH);
+    new_message_blink_start_time = cur_time;
+
+    // read and display new value
+    int cur_value = communicator.get_value();
+    display_value(cur_value)
+
+    // wait for next message
+    communicator.next();
   }
-  else wait();
+  // finish blink after NEW_MESSAGE_BLINK_DELAY milliseconds
+  if (new_message_blink_start_time && cur_time - new_message_blink_start_time > NEW_MESSAGE_BLINK_DELAY) {
+    digitalWrite(NEW_MESSAGE_BLINK_PIN, LOW);
+    new_message_blink_start_time = 0;
+  }
+  // display waiting first message process, if do not got first message
+  if (!got_first_message) wait();
+  
   
   delay(10);
 }
 
 void serialEvent() {
+  // Transitive SerialEvent call
   communicator.serialEvent();
 }
 
+/**
+ * Displays new message count.
+ */
 void display_value(int val) {
   for (int i = 2; i <= 7; i++) {
     if (val > i -2) {
@@ -62,7 +65,11 @@ void display_value(int val) {
 }
 
 
-// WAITING FOR FIRST MESSAGE
+
+/**
+ * Waiting for first message -
+ * just display waiting first message process.
+*/
 int wait_pin = 2;
 bool wait_pin_flag = true;
 int wait_spd = 1000;
@@ -100,5 +107,3 @@ void wait() {
     else wait_spd -= 1;
   }
 }
-
-
