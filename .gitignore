@@ -1,7 +1,4 @@
 Dockerfile
-daemon/__pycache__/
-daemon/imap/__pycache__/
-daemon/notifier/__pycache__/
 *.pyc
 *.log
 docker-run.cmd

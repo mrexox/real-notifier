@@ -1,8 +1,11 @@
 import imaplib
+import sys, os
 
+sys.path.append('../../monitor')
+from monitor.monitor import Monitor
 from imap_exception import ImapException
 
-class Imap():
+class Imap(Monitor):
     """Mail communication class
     
     Not fully written yet, so needs:
@@ -23,7 +26,7 @@ class Imap():
 
         self.imap.select('INBOX')
 
-    def new_messages_count(self):
+    def messages_count(self):
         (status, messages) = self.imap.search(None, '(UNSEEN)')
             
         if status == 'OK':
