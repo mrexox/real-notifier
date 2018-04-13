@@ -1,5 +1,6 @@
 import os
 import configparser
+import logging
 
 DEFAULT_TIMEOUT = 60
 DEFAULT_LOGLEVEL = 20
@@ -15,8 +16,7 @@ class Config:
         if os.path.exists("config.cfg"): # (ian) I suggest to put it to /etc/rnotifier/config.ini
             config.read("config.cfg")
         else:
-            print("File 'config.cfg' does not exist")
-            raise Exception() # TODO specify exception
+            raise Exception("File 'config.cfg' does not exist.")
 
         self.config = {
             'daemon': {
@@ -25,7 +25,7 @@ class Config:
             'mail': {
                 'enabled': False
             },
-            'log': {
+            'logging': {
                 'path': DEFAULT_LOGPATH,
                 'level': DEFAULT_LOGLEVEL
             },
@@ -46,15 +46,15 @@ class Config:
             self.config['mail']['password'] = config.get('imap', 'password')
 
         # notify
-        if config.has_option('notify', 'type'):
-            self.config['notify']['type'] = config.get('notify', 'type')
+        if config.has_option('notifier', 'type'):
+            self.config['notifier']['type'] = config.get('notifier', 'type')
 
         # log
-        if config.has_option('log', 'path'):
-            self.config['log']['path'] = config.get('log', 'path')
-            
-        if config.has_option('log', 'level'):
-            self.config['log']['level'] = int(config.get('log', 'level'))
+        if config.has_option('logging', 'path'):
+            self.config['logging']['path'] = config.get('logging', 'path')            
+        if config.has_option('logging', 'level'):
+            self.config['logging']['level'] = int(config.get('logging', 'level'))
+
 
     def __getitem__(self, attr):
         """Dictionary interface. Only getter"""

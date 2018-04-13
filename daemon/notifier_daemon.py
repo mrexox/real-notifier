@@ -9,20 +9,20 @@ from config import Config
 from imap.imap import *
 from notifier.file import FileNotifier
 
-class RealNotifier(Daemon):
-    def run(self):
+class NotifierDaemon(Daemon):
+    def _run(self):
         imap = False
         out = False
 
-        if self.config.mail:
+        if self.config['mail']['enabled']:
             try:
-                imap = Imap(self.config.mail_login, self.config.mail_password)
+                imap = Imap(self.config['mail']['login'], self.config['mail']['password'])
             except ImapException as e:
                 logging.error(e)
             else:
                 logging.debug("RealNotifier: Imap initialized")        
 
-        if self.config.notify_type == "file":
+        if self.config['notifier']['type'] == "file":
             out = FileNotifier()
             logging.debug("RealNotifier: FileNotifier initialized")
         # elif config.notifyType == "oter notify type":
@@ -39,7 +39,7 @@ class RealNotifier(Daemon):
                     
             try:
                 out.notify(imap_count)
-                time.sleep(self.config.daemon_timeout)
+                time.sleep(self.config['daemon']['timeout'])
             except Exception as e:
                 logging.error(e)
                 sys.exit(1)
@@ -51,7 +51,7 @@ if __name__ == '__main__':
     import tempfile
     
     pid_file = tempfile.gettempdir() + '/daemonRealNotifier.pid'
-    daemon = RealNotifier(pid_file)
+    daemon = NotifierDaemon(pid_file)
 
     if len(sys.argv) == 2:
         if 'start' == sys.argv[1]:

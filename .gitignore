@@ -4,5 +4,5 @@ daemon/imap/__pycache__/
 daemon/notifier/__pycache__/
 *.pyc
 *.log
-docker_run.cmd
+docker-run.cmd
 notes.txt

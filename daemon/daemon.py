@@ -24,14 +24,16 @@ class Daemon:
 	def __init__(self, pidfile): 
 		self.pidfile = pidfile
 		self.config = Config()
-		logging.basicConfig(filename = self.config.log_path + '/RealNotifier.log',
+		logging.basicConfig(filename = self.config['logging']['path'] + '/notitier_daemon_log.log',
                                     filemode="w",
-                                    level = self.config.log_level,
+                                    level = self.config['logging']['level'],
                                     format = '%(asctime)s %(levelname)s: %(message)s',
                                     datefmt = '%Y-%m-%d %I:%M:%S')
-		logging.debug("Daemon:  initialized.")
+		
+
+		logging.debug("Daemon initialized.")
 	        
-	def daemonize(self):
+	def _daemonize(self):
 		"""Deamonize class. UNIX double fork mechanism."""
 
 		try: 
@@ -73,13 +75,13 @@ class Daemon:
 		os.dup2(se.fileno(), sys.stderr.fileno())
 	        
 		# write pidfile
-		atexit.register(self.delpid)
+		atexit.register(self._delpid)
 
 		pid = str(os.getpid())
 		with open(self.pidfile,'w+') as f:
 			f.write(pid + '\n')
 	                
-	def delpid(self):
+	def _delpid(self):
 		os.remove(self.pidfile)
 
 	def start(self):
@@ -99,9 +101,9 @@ class Daemon:
 			sys.exit(1)
 		        
 		# Start the daemon
-		self.daemonize()
-		logging.debug("Daemon: started")
-		self.run()
+		self._daemonize()
+		logging.debug("Daemon started")
+		self._run()
 
 	def stop(self):
 		"""Stop the daemon."""
@@ -132,14 +134,14 @@ class Daemon:
 			else:
 				logging.error(str(err.args))
 				sys.exit(1)
-		                logging.debug("Daemon: stoped")
+		logging.debug("Daemon stoped")
 
 	def restart(self):
 		"""Restart the daemon."""
 		self.stop()
 		self.start()
 
-	def run(self):
+	def _run(self):
 		"""You should override this method when you subclass Daemon.
 		
 		It will be called after the process has been daemonized by 
